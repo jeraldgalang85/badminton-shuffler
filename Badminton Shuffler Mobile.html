@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Badminton Shuffler Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px 10px 80px 10px;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 20px;
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            padding: 10px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .toggle-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .section-content {
+            padding: 10px;
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
+        /* Player Input */
+        .player-column {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 3px solid #ddd;
+        }
+
+        .player-column.beginner {
+            border-color: #28a745;
+        }
+
+        .player-column.intermediate {
+            border-color: #ffc107;
+        }
+
+        .player-column.advanced {
+            border-color: #dc3545;
+        }
+
+        .column-header {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .beginner .column-header {
+            background: #28a745;
+        }
+
+        .intermediate .column-header {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .advanced .column-header {
+            background: #dc3545;
+        }
+
+        .player-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-input-group input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .player-input-group button {
+            padding: 15px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            min-width: 80px;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 2px solid #ddd;
+            font-size: 1.1em;
+        }
+
+        .player-item button {
+            padding: 8px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            min-width: 70px;
+        }
+
+        /* Regular Players */
+        .regular-input-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .regular-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .regular-input-group input {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .star-selector-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .star-selector {
+            font-size: 2em;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+            padding: 10px;
+        }
+
+        .star-selector.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .regular-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .regular-player-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .regular-player-item input[type="checkbox"] {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+
+        .regular-player-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: 1.05em;
+        }
+
+        .regular-player-stars {
+            display: flex;
+            gap: 3px;
+        }
+
+        .regular-player-stars span {
+            font-size: 1.3em;
+        }
+
+        .regular-remove-btn {
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .regular-players-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* Configuration */
+        .config-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .config-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .config-group select,
+        .config-group input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 70px;
+            height: 35px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 35px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 27px;
+            width: 27px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(35px);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        /* Results */
+        .results {
+            margin-top: 20px;
+        }
+
+        .round {
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .round-header {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .court {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .court-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .team {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .team-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .player-name {
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .player-name.beginner {
+            background: #28a745;
+            color: white;
+        }
+
+        .player-name.intermediate {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .player-name.advanced {
+            background: #dc3545;
+            color: white;
+        }
+
+        .player-name.selected {
+            border: 3px solid #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .player-name.swap-target {
+            border: 3px dashed #28a745;
+            animation: pulse 1s infinite;
+        }
+
+        .vs {
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+
+        .sitting-out {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 2px solid #ffc107;
+        }
+
+        .sitting-out-label {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .print-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(40, 167, 69, 0);
+            }
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #ddd;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .bottom-nav button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .bottom-nav .nav-generate {
+            background: #667eea;
+            color: white;
+        }
+
+        .bottom-nav .nav-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 20px;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .section:not(.results) {
+                display: none;
+            }
+            .bottom-nav {
+                display: none;
+            }
+            .print-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏸 Badminton Shuffler</h1>
+
+        <!-- Player Input Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('players')">
+                <div>
+                    <div class="section-title">Players</div>
+                    <small id="total-players">Total: 0</small>
+                </div>
+                <span>▼</span>
+            </div>
+            <div class="section-content" id="players-content">
+                <div class="player-column beginner">
+                    <div class="column-header">Beginner <span id="beginner-count">(0)</span></div>
+                    <div class="player-input-group">
+                        <input type="text" id="beginner-input" placeholder="Enter name">
+                        <button onclick="addPlayer('beginner')">Add</button>
+                    </div>
+                    <div id="beginner-list"></div>
+                </div>
+
+                <div class="player-column intermediate">
+                    <div class="column-header">Intermediate <span id="intermediate-count">(0)</span></div>
+                    <div class="player-input-group">
+                        <input type="text" id="intermediate-input" placeholder="Enter name">
+                        <button onclick="addPlayer('intermediate')">Add</button>
+                    </div>
+                    <div id="intermediate-list"></div>
+                </div>
+
+                <div class="player-column advanced">
+                    <div class="column-header">Advanced <span id="advanced-count">(0)</span></div>
+                    <div class="player-input-group">
+                        <input type="text" id="advanced-input" placeholder="Enter name">
+                        <button onclick="addPlayer('advanced')">Add</button>
+                    </div>
+                    <div id="advanced-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regular Players Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('regular')">
+                <div class="section-title">Regular Players</div>
+                <span>▼</span>
+            </div>
+            <div class="section-content collapsed" id="regular-content">
+                <div class="regular-input-section">
+                    <input type="text" id="new-regular-name" placeholder="Enter player name" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; margin-bottom: 10px;">
+                    <div class="star-selector-group" id="new-regular-stars">
+                        <span class="star-selector" data-level="1" onclick="selectNewRegularLevel(1)">⭐</span>
+                        <span class="star-selector" data-level="2" onclick="selectNewRegularLevel(2)">⭐</span>
+                        <span class="star-selector" data-level="3" onclick="selectNewRegularLevel(3)">⭐</span>
+                    </div>
+                    <div class="regular-buttons">
+                        <button onclick="addRegularPlayer()" class="btn btn-primary">Add Regular Player</button>
+                        <button onclick="loadRegularPlayers()" class="btn btn-primary">Load All Regular Players</button>
+                        <button onclick="selectAllRegulars()" class="btn btn-primary">Select All</button>
+                        <button onclick="autoPopulatePlayers()" class="btn btn-primary">Auto-Populate Selected</button>
+                    </div>
+                </div>
+                
+                <div class="regular-players-list" id="regular-players-list">
+                    <!-- Regular players will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('config')">
+                <div class="section-title">Game Settings</div>
+                <span>▼</span>
+            </div>
+            <div class="section-content collapsed" id="config-content">
+                <div class="config-group">
+                    <label for="game-type">Game Type:</label>
+                    <select id="game-type">
+                        <option value="level">Level Game (Same skill)</option>
+                        <option value="mix">Mix Game (Mixed skill)</option>
+                    </select>
+                </div>
+
+                <div class="config-group">
+                    <label for="court-count">Number of Courts:</label>
+                    <input type="number" id="court-count" min="1" max="10" value="2">
+                </div>
+
+                <div class="config-group">
+                    <label>Score Tracking:</label>
+                    <div class="toggle-group">
+                        <span style="font-size: 1.1em;">Off</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="score-tracking">
+                            <span class="slider"></span>
+                        </label>
+                        <span style="font-size: 1.1em;">On</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section results hidden" id="results-section">
+            <div class="section-header" onclick="toggleSection('results')">
+                <div class="section-title">Match Schedule</div>
+                <span>▼</span>
+            </div>
+            <div class="section-content" id="results-content">
+                <button class="print-btn" onclick="printSchedule()">🖨️ Print Schedule</button>
+                <div id="results-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-generate" onclick="generateGames()">Generate Teams</button>
+        <button class="nav-reset" onclick="resetAll()">Reset</button>
+    </div>
+
+    <script>
+        // Player data structure
+        const players = {
+            beginner: [],
+            intermediate: [],
+            advanced: []
+        };
+
+        let regularPlayers = [];
+        let newRegularStarLevel = 2;
+        let generatedRounds = [];
+        let selectedPlayer = null;
+
+        const defaultRegularPlayers = [
+            "Allan Dale Ho", "Allyza Magsino Ramos", "Amir Acosta", "Ian Bautista",
+            "Chesca Chua-Vivas", "Dianne Miles Ho", "Dyan Galang", "Earl Angkiko",
+            "Edz Verduz", "Gemma Dulguime", "Gian Verduz", "Isabel Cabucana",
+            "Jay-ar Ramos", "Jerald Galang", "Lester Cabucana", "Luzsil Ledesma",
+            "Micheal Chavez", "Michael Asterpix", "Michael Magpantay", "Mok Vivas",
+            "Pjay Lagura", "Vonnet Estaris", "Zoe Chow"
+        ];
+
+        // Toggle sections
+        function toggleSection(sectionId) {
+            const content = document.getElementById(`${sectionId}-content`);
+            content.classList.toggle('collapsed');
+        }
+
+        // Add player to a skill level
+        function addPlayer(level) {
+            const input = document.getElementById(`${level}-input`);
+            const name = input.value.trim();
+            
+            if (name) {
+                players[level].push(name);
+                input.value = '';
+                renderPlayers(level);
+            }
+        }
+
+        // Remove player from a skill level
+        function removePlayer(level, index) {
+            players[level].splice(index, 1);
+            renderPlayers(level);
+        }
+
+        // Render player list for a skill level
+        function renderPlayers(level) {
+            const list = document.getElementById(`${level}-list`);
+            const countSpan = document.getElementById(`${level}-count`);
+            
+            list.innerHTML = '';
+            
+            players[level].forEach((name, index) => {
+                const item = document.createElement('div');
+                item.className = 'player-item';
+                item.innerHTML = `
+                    <span>${name}</span>
+                    <button onclick="removePlayer('${level}', ${index})">Remove</button>
+                `;
+                list.appendChild(item);
+            });
+            
+            if (countSpan) {
+                countSpan.textContent = `(${players[level].length})`;
+            }
+            
+            updateTotalCount();
+        }
+        
+        // Update total player count
+        function updateTotalCount() {
+            const totalSpan = document.getElementById('total-players');
+            if (totalSpan) {
+                const total = players.beginner.length + players.intermediate.length + players.advanced.length;
+                totalSpan.textContent = `Total: ${total}`;
+            }
+        }
+
+        // Enable Enter key to add players
+        ['beginner', 'intermediate', 'advanced'].forEach(level => {
+            document.getElementById(`${level}-input`).addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addPlayer(level);
+                }
+            });
+        });
+
+        // Shuffle array utility
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Generate teams for Level Game
+        function generateLevelGame(courtCount) {
+            const allPlayers = [];
+            const skillWeights = { beginner: 1, intermediate: 2, advanced: 3 };
+            
+            Object.keys(players).forEach(level => {
+                players[level].forEach(name => {
+                    allPlayers.push({ name, level, weight: skillWeights[level] });
+                });
+            });
+
+            if (allPlayers.length < 4) {
+                alert('Need at least 4 players to start a game!');
+                return null;
+            }
+
+            const shuffled = shuffleArray(allPlayers);
+            const rounds = [];
+            const playersPerRound = courtCount * 4;
+            
+            let playerPool = [...shuffled];
+            let roundNum = 1;
+            
+            while (playerPool.length >= 4) {
+                const round = { number: roundNum, courts: [], sittingOut: [] };
+                const playingThisRound = playerPool.slice(0, Math.min(playersPerRound, playerPool.length));
+                const remaining = playerPool.slice(playingThisRound.length);
+
+                const grouped = { beginner: [], intermediate: [], advanced: [] };
+                playingThisRound.forEach(p => grouped[p.level].push(p));
+
+                const leftoverPlayers = [];
+                const courtAssignments = [];
+                
+                ['advanced', 'intermediate', 'beginner'].forEach(level => {
+                    const levelPlayers = shuffleArray(grouped[level]);
+                    
+                    for (let i = 0; i + 3 < levelPlayers.length; i += 4) {
+                        courtAssignments.push({
+                            level: level,
+                            team1: [levelPlayers[i], levelPlayers[i + 1]],
+                            team2: [levelPlayers[i + 2], levelPlayers[i + 3]]
+                        });
+                    }
+
+                    const leftover = levelPlayers.length % 4;
+                    if (leftover > 0) {
+                        leftoverPlayers.push(...levelPlayers.slice(-leftover));
+                    }
+                });
+                
+                let courtNum = 1;
+                courtAssignments.slice(0, courtCount).forEach(assignment => {
+                    round.courts.push({
+                        number: courtNum,
+                        team1: assignment.team1,
+                        team2: assignment.team2
+                    });
+                    courtNum++;
+                });
+                
+                if (courtAssignments.length > courtCount) {
+                    courtAssignments.slice(courtCount).forEach(assignment => {
+                        leftoverPlayers.push(...assignment.team1, ...assignment.team2);
+                    });
+                }
+
+                while (courtNum <= courtCount && leftoverPlayers.length >= 4) {
+                    const mixedCourt = balanceTeamsForCourt(leftoverPlayers, courtNum);
+                    if (mixedCourt) {
+                        round.courts.push(mixedCourt);
+                        courtNum++;
+                    } else {
+                        break;
+                    }
+                }
+
+                round.sittingOut = [...leftoverPlayers, ...remaining];
+                rounds.push(round);
+
+                playerPool = [...remaining, ...playingThisRound];
+                roundNum++;
+
+                if (roundNum > 5) break;
+            }
+
+            return rounds;
+        }
+
+        // Generate teams for Mix Game
+        function generateMixGame(courtCount) {
+            const allPlayers = [];
+            const skillWeights = { beginner: 1, intermediate: 2, advanced: 3 };
+            
+            Object.keys(players).forEach(level => {
+                players[level].forEach(name => {
+                    allPlayers.push({ name, level, weight: skillWeights[level] });
+                });
+            });
+
+            if (allPlayers.length < 4) {
+                alert('Need at least 4 players to start a game!');
+                return null;
+            }
+
+            const shuffled = shuffleArray(allPlayers);
+            const rounds = [];
+            const playersPerRound = courtCount * 4;
+            
+            let playerPool = [...shuffled];
+            let roundNum = 1;
+            
+            while (playerPool.length >= 4) {
+                const round = { number: roundNum, courts: [], sittingOut: [] };
+                const playingThisRound = playerPool.slice(0, Math.min(playersPerRound, playerPool.length));
+                const remaining = playerPool.slice(playingThisRound.length);
+
+                const balancedCourts = createBalancedTeams(playingThisRound, courtCount);
+                round.courts = balancedCourts;
+
+                const usedPlayers = round.courts.length * 4;
+                const leftoverFromPlaying = playingThisRound.slice(usedPlayers);
+                round.sittingOut = [...leftoverFromPlaying, ...remaining];
+                
+                rounds.push(round);
+
+                playerPool = [...remaining, ...playingThisRound];
+                roundNum++;
+
+                if (roundNum > 5) break;
+            }
+
+            return rounds;
+        }
+
+        function createBalancedTeams(availablePlayers, courtCount) {
+            const courts = [];
+            const grouped = { advanced: [], intermediate: [], beginner: [] };
+            
+            availablePlayers.forEach(p => grouped[p.level].push(p));
+            
+            grouped.advanced = shuffleArray(grouped.advanced);
+            grouped.intermediate = shuffleArray(grouped.intermediate);
+            grouped.beginner = shuffleArray(grouped.beginner);
+            
+            const allPlayersList = [];
+            const maxLength = Math.max(grouped.advanced.length, grouped.intermediate.length, grouped.beginner.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                if (i < grouped.advanced.length) allPlayersList.push(grouped.advanced[i]);
+                if (i < grouped.intermediate.length) allPlayersList.push(grouped.intermediate[i]);
+                if (i < grouped.beginner.length) allPlayersList.push(grouped.beginner[i]);
+            }
+            
+            for (let courtNum = 1; courtNum <= courtCount; courtNum++) {
+                if (allPlayersList.length < 4) break;
+                
+                const fourPlayers = allPlayersList.splice(0, 4);
+                if (fourPlayers.length < 4) break;
+                
+                fourPlayers.sort((a, b) => b.weight - a.weight);
+                
+                courts.push({
+                    number: courtNum,
+                    team1: [fourPlayers[0], fourPlayers[3]],
+                    team2: [fourPlayers[1], fourPlayers[2]]
+                });
+            }
+            
+            return courts;
+        }
+
+        function balanceTeamsForCourt(players, courtNum) {
+            if (players.length < 4) return null;
+            
+            const shuffledPlayers = shuffleArray([...players]);
+            const grouped = {
+                advanced: shuffledPlayers.filter(p => p.level === 'advanced'),
+                intermediate: shuffledPlayers.filter(p => p.level === 'intermediate'),
+                beginner: shuffledPlayers.filter(p => p.level === 'beginner')
+            };
+            
+            let team1 = [];
+            let team2 = [];
+            
+            const strategies = [
+                () => {
+                    if (grouped.advanced.length >= 4) {
+                        team1 = [grouped.advanced[0], grouped.advanced[1]];
+                        team2 = [grouped.advanced[2], grouped.advanced[3]];
+                        return true;
+                    }
+                    return false;
+                },
+                () => {
+                    if (grouped.intermediate.length >= 4) {
+                        team1 = [grouped.intermediate[0], grouped.intermediate[1]];
+                        team2 = [grouped.intermediate[2], grouped.intermediate[3]];
+                        return true;
+                    }
+                    return false;
+                },
+                () => {
+                    if (grouped.beginner.length >= 4) {
+                        team1 = [grouped.beginner[0], grouped.beginner[1]];
+                        team2 = [grouped.beginner[2], grouped.beginner[3]];
+                        return true;
+                    }
+                    return false;
+                },
+                () => {
+                    if (grouped.advanced.length >= 2 && grouped.intermediate.length >= 2) {
+                        team1 = [grouped.advanced[0], grouped.intermediate[0]];
+                        team2 = [grouped.advanced[1], grouped.intermediate[1]];
+                        return true;
+                    }
+                    return false;
+                },
+                () => {
+                    if (grouped.intermediate.length >= 2 && grouped.beginner.length >= 2) {
+                        team1 = [grouped.intermediate[0], grouped.beginner[0]];
+                        team2 = [grouped.intermediate[1], grouped.beginner[1]];
+                        return true;
+                    }
+                    return false;
+                }
+            ];
+            
+            for (const strategy of strategies) {
+                if (strategy()) {
+                    team1.forEach(p => {
+                        const idx = players.findIndex(player => player.name === p.name && player.level === p.level);
+                        if (idx !== -1) players.splice(idx, 1);
+                    });
+                    team2.forEach(p => {
+                        const idx = players.findIndex(player => player.name === p.name && player.level === p.level);
+                        if (idx !== -1) players.splice(idx, 1);
+                    });
+                    
+                    return {
+                        number: courtNum,
+                        team1: team1,
+                        team2: team2
+                    };
+                }
+            }
+            
+            return null;
+        }
+
+        function generateGames() {
+            const gameType = document.getElementById('game-type').value;
+            const courtCount = parseInt(document.getElementById('court-count').value);
+
+            const totalPlayers = players.beginner.length + players.intermediate.length + players.advanced.length;
+
+            if (totalPlayers < 4) {
+                alert('Please add at least 4 players to start!');
+                return;
+            }
+
+            const suggestedCourts = Math.max(1, Math.floor(totalPlayers / 4));
+            const courtsToUse = courtCount || suggestedCourts;
+
+            let rounds;
+            if (gameType === 'level') {
+                rounds = generateLevelGame(courtsToUse);
+            } else {
+                rounds = generateMixGame(courtsToUse);
+            }
+
+            if (rounds) {
+                generatedRounds = rounds;
+                displayResults(rounds);
+            }
+        }
+
+        function displayResults(rounds) {
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+
+            rounds.forEach(round => {
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'round';
+                
+                let html = `<div class="round-header">Round ${round.number}</div>`;
+                
+                if (round.courts.length === 0) {
+                    html += '<div class="alert alert-warning">Not enough players for this round</div>';
+                } else {
+                    round.courts.forEach(court => {
+                        html += `
+                            <div class="court">
+                                <div class="court-title">Court ${court.number}</div>
+                                <div class="team">
+                                    <div class="team-label">Team 1:</div>
+                                    ${court.team1.map((p, idx) => 
+                                        `<span class="player-name ${p.level}" 
+                                               data-round="${round.number}" 
+                                               data-court="${court.number}" 
+                                               data-team="1" 
+                                               data-index="${idx}"
+                                               onclick="handlePlayerTap(this)">${p.name}</span>`
+                                    ).join('')}
+                                </div>
+                                <div class="vs">VS</div>
+                                <div class="team">
+                                    <div class="team-label">Team 2:</div>
+                                    ${court.team2.map((p, idx) => 
+                                        `<span class="player-name ${p.level}" 
+                                               data-round="${round.number}" 
+                                               data-court="${court.number}" 
+                                               data-team="2" 
+                                               data-index="${idx}"
+                                               onclick="handlePlayerTap(this)">${p.name}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (round.sittingOut.length > 0) {
+                    html += `
+                        <div class="sitting-out">
+                            <div class="sitting-out-label">Sitting Out:</div>
+                            ${round.sittingOut.map((p, idx) => 
+                                `<span class="player-name ${p.level}" 
+                                       data-round="${round.number}" 
+                                       data-sitting="true" 
+                                       data-index="${idx}"
+                                       onclick="handlePlayerTap(this)">${p.name}</span>`
+                            ).join('')}
+                        </div>
+                    `;
+                }
+
+                roundDiv.innerHTML = html;
+                container.appendChild(roundDiv);
+            });
+
+            document.getElementById('results-section').classList.remove('hidden');
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handlePlayerTap(element) {
+            if (!selectedPlayer) {
+                selectedPlayer = element;
+                element.classList.add('selected');
+                
+                document.querySelectorAll('.player-name').forEach(el => {
+                    if (el !== element && el.dataset.round === element.dataset.round) {
+                        el.classList.add('swap-target');
+                    }
+                });
+            } else {
+                if (element === selectedPlayer) {
+                    cancelSwap();
+                } else if (element.dataset.round === selectedPlayer.dataset.round) {
+                    performSwap(selectedPlayer, element);
+                    cancelSwap();
+                    displayResults(generatedRounds);
+                }
+            }
+        }
+
+        function performSwap(source, target) {
+            const round = generatedRounds[parseInt(source.dataset.round) - 1];
+            
+            let sourcePlayer, targetPlayer;
+            
+            if (source.dataset.sitting === 'true') {
+                sourcePlayer = round.sittingOut[parseInt(source.dataset.index)];
+            } else {
+                const sourceCourt = round.courts.find(c => c.number === parseInt(source.dataset.court));
+                sourcePlayer = source.dataset.team === '1' ? 
+                    sourceCourt.team1[parseInt(source.dataset.index)] : 
+                    sourceCourt.team2[parseInt(source.dataset.index)];
+            }
+            
+            if (target.dataset.sitting === 'true') {
+                targetPlayer = round.sittingOut[parseInt(target.dataset.index)];
+            } else {
+                const targetCourt = round.courts.find(c => c.number === parseInt(target.dataset.court));
+                targetPlayer = target.dataset.team === '1' ? 
+                    targetCourt.team1[parseInt(target.dataset.index)] : 
+                    targetCourt.team2[parseInt(target.dataset.index)];
+            }
+            
+            if (source.dataset.sitting === 'true' && target.dataset.sitting !== 'true') {
+                round.sittingOut[parseInt(source.dataset.index)] = targetPlayer;
+                const targetCourt = round.courts.find(c => c.number === parseInt(target.dataset.court));
+                if (target.dataset.team === '1') {
+                    targetCourt.team1[parseInt(target.dataset.index)] = sourcePlayer;
+                } else {
+                    targetCourt.team2[parseInt(target.dataset.index)] = sourcePlayer;
+                }
+            } else if (source.dataset.sitting !== 'true' && target.dataset.sitting === 'true') {
+                const sourceCourt = round.courts.find(c => c.number === parseInt(source.dataset.court));
+                if (source.dataset.team === '1') {
+                    sourceCourt.team1[parseInt(source.dataset.index)] = targetPlayer;
+                } else {
+                    sourceCourt.team2[parseInt(source.dataset.index)] = targetPlayer;
+                }
+                round.sittingOut[parseInt(target.dataset.index)] = sourcePlayer;
+            } else if (source.dataset.sitting !== 'true' && target.dataset.sitting !== 'true') {
+                const sourceCourt = round.courts.find(c => c.number === parseInt(source.dataset.court));
+                const targetCourt = round.courts.find(c => c.number === parseInt(target.dataset.court));
+                
+                if (source.dataset.team === '1') {
+                    sourceCourt.team1[parseInt(source.dataset.index)] = targetPlayer;
+                } else {
+                    sourceCourt.team2[parseInt(source.dataset.index)] = targetPlayer;
+                }
+                
+                if (target.dataset.team === '1') {
+                    targetCourt.team1[parseInt(target.dataset.index)] = sourcePlayer;
+                } else {
+                    targetCourt.team2[parseInt(target.dataset.index)] = sourcePlayer;
+                }
+            }
+        }
+
+        function cancelSwap() {
+            if (selectedPlayer) {
+                selectedPlayer.classList.remove('selected');
+            }
+            selectedPlayer = null;
+            document.querySelectorAll('.player-name').forEach(el => {
+                el.classList.remove('swap-target');
+            });
+        }
+
+        function resetAll() {
+            if (confirm('Are you sure you want to reset everything?')) {
+                players.beginner = [];
+                players.intermediate = [];
+                players.advanced = [];
+                
+                ['beginner', 'intermediate', 'advanced'].forEach(level => {
+                    renderPlayers(level);
+                });
+                
+                document.getElementById('results-section').classList.add('hidden');
+                document.getElementById('results-container').innerHTML = '';
+                generatedRounds = [];
+            }
+        }
+
+        function printSchedule() {
+            window.print();
+        }
+
+        // Regular Players Functions
+        function selectNewRegularLevel(level) {
+            newRegularStarLevel = level;
+            updateNewRegularStars();
+        }
+
+        function updateNewRegularStars() {
+            const stars = document.querySelectorAll('#new-regular-stars .star-selector');
+            stars.forEach((star, index) => {
+                if (index < newRegularStarLevel) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function addRegularPlayer() {
+            const input = document.getElementById('new-regular-name');
+            const name = input.value.trim();
+            
+            if (name) {
+                regularPlayers.push({
+                    name: name,
+                    level: newRegularStarLevel,
+                    checked: false
+                });
+                input.value = '';
+                newRegularStarLevel = 2;
+                updateNewRegularStars();
+                renderRegularPlayers();
+                saveRegularPlayers();
+            }
+        }
+
+        function loadRegularPlayers() {
+            if (regularPlayers.length > 0) {
+                if (!confirm('This will replace current regular players list. Continue?')) {
+                    return;
+                }
+            }
+            
+            const savedRatings = loadSavedRatings();
+            
+            regularPlayers = defaultRegularPlayers.map(name => ({
+                name: name,
+                level: savedRatings[name] || 2,
+                checked: false
+            }));
+            
+            renderRegularPlayers();
+            saveRatings();
+        }
+
+        function removeRegularPlayer(index) {
+            regularPlayers.splice(index, 1);
+            renderRegularPlayers();
+            saveRegularPlayers();
+        }
+
+        function toggleRegularLevel(index, newLevel) {
+            regularPlayers[index].level = newLevel;
+            renderRegularPlayers();
+            saveRatings();
+        }
+
+        function toggleRegularAttendance(index) {
+            regularPlayers[index].checked = !regularPlayers[index].checked;
+        }
+
+        function renderRegularPlayers() {
+            const container = document.getElementById('regular-players-list');
+            
+            if (regularPlayers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No regular players loaded yet. Click "Load All Regular Players" to start!</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            regularPlayers.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'regular-player-item';
+                
+                const starsHTML = Array(3).fill(0).map((_, i) => 
+                    `<span style="opacity: ${i < player.level ? '1' : '0.3'}" onclick="toggleRegularLevel(${index}, ${i + 1})">⭐</span>`
+                ).join('');
+                
+                item.innerHTML = `
+                    <input type="checkbox" ${player.checked ? 'checked' : ''} onchange="toggleRegularAttendance(${index})">
+                    <span class="regular-player-name">${player.name}</span>
+                    <div class="regular-player-stars">
+                        ${starsHTML}
+                    </div>
+                    <button class="regular-remove-btn" onclick="removeRegularPlayer(${index})">Remove</button>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        function selectAllRegulars() {
+            if (regularPlayers.length === 0) {
+                alert('No regular players loaded. Click "Load All Regular Players" first!');
+                return;
+            }
+            
+            const allSelected = regularPlayers.every(p => p.checked);
+            regularPlayers.forEach(player => {
+                player.checked = !allSelected;
+            });
+            
+            renderRegularPlayers();
+        }
+
+        function autoPopulatePlayers() {
+            const selectedPlayers = regularPlayers.filter(p => p.checked);
+            
+            if (selectedPlayers.length === 0) {
+                alert('Please select players by checking their checkboxes!');
+                return;
+            }
+            
+            players.beginner = [];
+            players.intermediate = [];
+            players.advanced = [];
+            
+            selectedPlayers.forEach(player => {
+                const levelMap = { 1: 'beginner', 2: 'intermediate', 3: 'advanced' };
+                const level = levelMap[player.level];
+                if (level) {
+                    players[level].push(player.name);
+                }
+            });
+            
+            ['beginner', 'intermediate', 'advanced'].forEach(level => {
+                renderPlayers(level);
+            });
+            
+            alert(`${selectedPlayers.length} players added to their respective skill levels!`);
+        }
+
+        function saveRegularPlayers() {
+            localStorage.setItem('badmintonShufflerPlayers', JSON.stringify(regularPlayers));
+        }
+
+        function loadSavedRegularPlayers() {
+            const saved = localStorage.getItem('badmintonShufflerPlayers');
+            return saved ? JSON.parse(saved) : null;
+        }
+
+        function saveRatings() {
+            saveRegularPlayers();
+        }
+
+        function loadSavedRatings() {
+            const players = loadSavedRegularPlayers();
+            if (players) {
+                const ratings = {};
+                players.forEach(p => ratings[p.name] = p.level);
+                return ratings;
+            }
+            return {};
+        }
+
+        // Initialize
+        updateNewRegularStars();
+        
+        window.addEventListener('load', () => {
+            const savedPlayers = loadSavedRegularPlayers();
+            if (savedPlayers && savedPlayers.length > 0) {
+                regularPlayers = savedPlayers.map(p => ({
+                    ...p,
+                    checked: false
+                }));
+                renderRegularPlayers();
+            } else {
+                regularPlayers = defaultRegularPlayers.map(name => ({
+                    name: name,
+                    level: 2,
+                    checked: false
+                }));
+                renderRegularPlayers();
+                saveRegularPlayers();
+            }
+        });
+    </script>
+</body>
+</html>
